@@ -8,7 +8,7 @@ import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
 import TourDetailsPage from './pages/TourDetailsPage';
 import MainLayout from './layouts/MainLayout'; // Import the layout component
-import './App.css';
+import './App.css'; // You might have global or app-specific styles here
 
 function App() {
   return (
