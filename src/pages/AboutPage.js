@@ -12,7 +12,7 @@ function AboutPage() {
   }, []);
 
   return (
-    <div className="bg-gray-50 py-20 transition-opacity duration-500 ease-in-out" className={isMounted ? 'opacity-100' : 'opacity-0'}>
+    <div className="bg-gray-50 py-20 transition-opacity duration-500 ease-in-out" >
       <div className="container mx-auto">
         {/* Hero Section with Background Image */}
         <section
