@@ -1,6 +1,10 @@
 // TourDetailsPage.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+
+const primaryGreen = '#4CAF50';
+const luxuryGold = '#FFD700';
+const earthBrown = '#8B4513';
 
 function TourDetailsPage() {
   const { id } = useParams();
@@ -10,16 +14,16 @@ function TourDetailsPage() {
   const imageCarouselRef = useRef(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Sample tour data with more details and images
-  const sampleToursData = [
+  // Sample tour data (consider fetching from an API)
+  const sampleToursData = useMemo(() => [
     {
       id: 1,
       title: 'Majestic Simien Mountains Trek',
       price: '$650',
       images: [
-       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMJ5QCCSnlhI2rco-htaM2CLuXTVXyFysOMw&s',
-       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJl3Nfda1ndKVmV6LoqR9q91majbImcQ1B5zuzGFwNLZtUDv2Hufzpa-YpBkmU1keKGNY&usqp=CAU',
-       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTTooM6fiVCT6lUulNxpZ0B3HXnmx7UY1x5Ur__-KlRt5c2IJPYjFKaMyRGDUgdNR3ZaY&usqp=CAU' ,
+        'https://imgix.brilliant-ethiopia.com/trekking-in-the-simien-mountains-1.jpg?auto=format,enhance,compress&fit=crop&crop=entropy,faces,focalpoint&w=1880&h=740&q=30',
+        'https://simienmountainstrekking.com/img/tours1.jpg',
+        'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/22/93/8c/imetgogo-viewpoint-simien.jpg?w=900&h=-1&s=1',
       ],
       description:
         'Embark on an unforgettable trekking adventure through the breathtaking Simien Mountains National Park, often called the "Roof of Africa". Discover dramatic landscapes, unique wildlife like the Gelada baboon and Walia ibex, and immerse yourself in the rich culture of the local communities.',
@@ -67,13 +71,14 @@ function TourDetailsPage() {
       priceExcludes: ['Flights', 'Visa fees', 'Photography fees', 'Tips'],
     },
     // ... more tours
-  ];
+  ], []);
 
   useEffect(() => {
     const fetchTourDetails = async () => {
       try {
         setLoading(true);
         setError(null);
+        // Simulate API call
         setTimeout(() => {
           const foundTour = sampleToursData.find((t) => t.id === parseInt(id));
           if (foundTour) {
@@ -82,7 +87,7 @@ function TourDetailsPage() {
             setError({ message: 'Tour not found' });
           }
           setLoading(false);
-        }, 1000);
+        }, 500); // Reduced loading time for better UX
       } catch (err) {
         setError(err);
         setLoading(false);
@@ -90,45 +95,102 @@ function TourDetailsPage() {
     };
 
     fetchTourDetails();
-  }, [id]);
+  }, [id, sampleToursData]); // Added sampleToursData as a dependency
 
-  const nextImage = () => {
-    if (tour && tour.images && imageCarouselRef.current) {
+  const handleNextImage = () => {
+    if (tour?.images?.length && imageCarouselRef.current) {
       const newIndex = (currentImageIndex + 1) % tour.images.length;
       setCurrentImageIndex(newIndex);
-      const newPosition = newIndex * imageCarouselRef.current.offsetWidth;
-      imageCarouselRef.current.scrollTo({ left: newPosition, behavior: 'smooth' });
+      imageCarouselRef.current.scrollTo({
+        left: imageCarouselRef.current.offsetWidth * newIndex,
+        behavior: 'smooth',
+      });
     }
   };
 
-  const prevImage = () => {
-    if (tour && tour.images && imageCarouselRef.current) {
+  const handlePrevImage = () => {
+    if (tour?.images?.length && imageCarouselRef.current) {
       const newIndex = (currentImageIndex - 1 + tour.images.length) % tour.images.length;
       setCurrentImageIndex(newIndex);
-      const newPosition = newIndex * imageCarouselRef.current.offsetWidth;
-      imageCarouselRef.current.scrollTo({ left: newPosition, behavior: 'smooth' });
+      imageCarouselRef.current.scrollTo({
+        left: imageCarouselRef.current.offsetWidth * newIndex,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const handleDotClick = (index) => {
+    setCurrentImageIndex(index);
+    if (imageCarouselRef.current) {
+      imageCarouselRef.current.scrollTo({
+        left: imageCarouselRef.current.offsetWidth * index,
+        behavior: 'smooth',
+      });
     }
   };
 
   if (loading) {
-    return <div className="container mx-auto py-8 text-center">Loading tour details...</div>;
+    return (
+      <div className="container mx-auto py-10 flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="container mx-auto py-8 text-center text-red-500">Error: {error.message}</div>;
+    return (
+      <div className="container mx-auto py-8 text-center text-red-500">
+        <svg
+          className="w-12 h-12 mx-auto mb-4 fill-current text-red-500"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Error: {error.message}
+      </div>
+    );
   }
 
   if (!tour) {
-    return <div className="container mx-auto py-8 text-center">Tour not found.</div>;
+    return (
+      <div className="container mx-auto py-8 text-center">
+        <svg
+          className="w-12 h-12 mx-auto mb-4 fill-current text-gray-400"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Tour not found.
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto py-12">
-      <h1 className="text-4xl font-extrabold text-green-700 mb-6 tracking-tight">{tour.title}</h1>
+    <div className="container mx-auto mt-8 p-6 bg-white shadow-lg rounded-md">
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold text-green-700 tracking-tight mb-4" style={{ color: primaryGreen }}>
+          {tour.title}
+        </h1>
+        <p className="text-gray-600 text-sm mb-2">
+          {/* You might want to display a location or a short tagline here */}
+        </p>
+      </div>
 
       {/* Image Carousel */}
-      {tour.images && tour.images.length > 0 && (
-        <div className="relative mb-8 rounded-md shadow-lg overflow-hidden">
+      {tour.images?.length > 0 && (
+        <div className="relative rounded-md overflow-hidden shadow-md mb-8">
           <div
             ref={imageCarouselRef}
             className="flex transition-transform duration-300 ease-out"
@@ -146,35 +208,30 @@ function TourDetailsPage() {
           {tour.images.length > 1 && (
             <>
               <button
-                onClick={prevImage}
-                className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none"
+                onClick={handlePrevImage}
+                className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               <button
-                onClick={nextImage}
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none"
+                onClick={handleNextImage}
+                className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white rounded-full w-10 h-10 flex items-center justify-center focus:outline-none"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                 </svg>
               </button>
-              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+              <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
                 {tour.images.map((_, index) => (
                   <button
                     key={index}
                     className={`rounded-full w-3 h-3 focus:outline-none ${
                       currentImageIndex === index ? 'bg-green-500' : 'bg-gray-300'
                     }`}
-                    onClick={() => {
-                      setCurrentImageIndex(index);
-                      if (imageCarouselRef.current) {
-                        const newPosition = index * imageCarouselRef.current.offsetWidth;
-                        imageCarouselRef.current.scrollTo({ left: newPosition, behavior: 'smooth' });
-                      }
-                    }}
+                    style={{ backgroundColor: currentImageIndex === index ? primaryGreen : 'rgba(0, 0, 0, 0.1)' }}
+                    onClick={() => handleDotClick(index)}
                   />
                 ))}
               </div>
@@ -183,67 +240,88 @@ function TourDetailsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Improved Highlights Section */}
         <div>
-          <h2 className="text-2xl font-semibold text-green-600 mb-4">Description</h2>
-          <p className="text-gray-700 text-lg leading-relaxed mb-6">{tour.description}</p>
-
-          {tour.highlights && tour.highlights.length > 0 && (
-            <>
-              <h3 className="text-xl font-semibold text-green-600 mb-3">Highlights</h3>
-              <ul className="list-disc list-inside text-gray-700 mb-6">
-                {tour.highlights.map((highlight, index) => (
-                  <li key={index}>{highlight}</li>
-                ))}
-              </ul>
-            </>
+          <h2 className="text-xl font-semibold mb-3" style={{ color: primaryGreen }}>
+            Highlights
+          </h2>
+          {tour.highlights?.length > 0 ? (
+            <ul className="list-disc list-inside text-gray-700">
+              {tour.highlights.map((highlight, index) => (
+                <li key={index} className="mb-2">{highlight}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">No highlights available for this tour.</p>
           )}
         </div>
-        <div>
-          <div className="bg-white rounded-md shadow-md p-6">
-            <h3 className="text-xl font-semibold text-gold-600 mb-4">Price: {tour.price}</h3>
-            <button className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline">
-              Book Your Adventure
-            </button>
-            <div className="mt-6">
-              {tour.priceIncludes && tour.priceIncludes.length > 0 && (
-                <>
-                  <h4 className="text-lg font-semibold text-gray-800 mb-2">Price Includes:</h4>
-                  <ul className="list-disc list-inside text-gray-600 mb-3">
-                    {tour.priceIncludes.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              {tour.priceExcludes && tour.priceExcludes.length > 0 && (
-                <>
-                  <h4 className="text-lg font-semibold text-gray-800 mb-2">Price Excludes:</h4>
-                  <ul className="list-disc list-inside text-gray-600">
-                    {tour.priceExcludes.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
+
+        {/* Price and Booking */}
+        <div className="bg-gray-100 rounded-md p-6 shadow-sm border border-gray-200">
+          <h3 className="text-xl font-semibold mb-4" style={{ color: luxuryGold }}>
+            Price: {tour.price}
+          </h3>
+          <button
+            className="w-full text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition duration-300"
+            style={{ backgroundColor: primaryGreen, hoverBackgroundColor: '#45a049' }}
+          >
+            Book Your Adventure
+          </button>
+          <div className="mt-4">
+            {tour.priceIncludes?.length > 0 && (
+              <div className="mb-3">
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">Includes:</h4>
+                <ul className="list-disc list-inside text-gray-600">
+                  {tour.priceIncludes.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {tour.priceExcludes?.length > 0 && (
+              <div>
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">Excludes:</h4>
+                <ul className="list-disc list-inside text-gray-600">
+                  {tour.priceExcludes.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {tour.itinerary && tour.itinerary.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-green-600 mb-6">Itinerary</h2>
+      {/* Itinerary Section */}
+      {tour.itinerary?.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-2xl font-semibold mb-4" style={{ color: primaryGreen }}>
+            Itinerary
+          </h2>
           <div className="space-y-4">
             {tour.itinerary.map((item, index) => (
-              <div key={index} className="bg-white rounded-md shadow-sm p-4">
-                <h4 className="font-semibold text-gray-800">{`Day ${item.day}:`}</h4>
+              <div
+                key={index}
+                className="bg-white rounded-md shadow-sm p-4 border border-gray-200"
+                style={{ borderColor: earthBrown }}
+              >
+                <h4 className="font-semibold text-gray-800 mb-1">{`Day ${item.day}:`}</h4>
                 <p className="text-gray-700">{item.activity}</p>
               </div>
             ))}
           </div>
         </div>
       )}
+
+      {/* Description Section (Moved and Restyled with Brown border) */}
+      {tour?.description && (
+        <div className="mt-10 bg-gray-50 rounded-md p-6 shadow-sm border" style={{ borderColor: earthBrown }}>
+          <h2 className="text-2xl font-semibold mb-4" style={{ color: primaryGreen }}>
+            About this Tour
+          </h2>
+          <p className="text-gray-800 leading-relaxed">{tour.description}</p>
+        </div>)}
     </div>
   );
 }
