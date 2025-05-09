@@ -7,7 +7,7 @@ function HeroSection() {
   return (
     <section
       className="relative py-32 md:py-48 bg-cover bg-center"
-      style={{ backgroundImage: 'url(https://themexriver.com/wp/goyto/wp-content/uploads/2023/03/home-3-hero-bg.jpg)' }} // Replace with your image
+      style={{ backgroundImage: 'url(https://www.globaladventurechallenges.com/storage/app/uploads/public/5ba/3a2/de4/thumb_3503_647_1_0_0_auto.png)' }} // Replace with your image
     >
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       <div className="container mx-auto text-center relative z-10">

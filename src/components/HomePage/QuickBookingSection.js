@@ -3,9 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const quickBookings = [
-  { id: 1, title: 'Rafting Whitewater', description: 'Dive into thrilling whitewater rafting adventures. Book your experience in just a few clicks. Fast, simple, and hassle-free.', imageUrl: 'https://via.placeholder.com/300x200?text=Rafting' },
-  { id: 2, title: 'Easy & Quick Booking', description: 'Book your next tour in just a few clicks. Fast, simple, and hassle-free.', imageUrl: 'https://via.placeholder.com/300x200?text=Quick+Booking+1' },
-  { id: 3, title: 'Easy & Quick Booking', description: 'Book your next tour in just a few clicks. Fast, simple, and hassle-free.', imageUrl: 'https://via.placeholder.com/300x200?text=Quick+Booking+2' },
+  { id: 1, title: 'Rafting Whitewater', description: 'Dive into thrilling whitewater rafting adventures. Book your experience in just a few clicks. Fast, simple, and hassle-free.', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9u7FlC34AVqINN6klZP2NZGdH64hQ6XhOLv4dUmC2b6s1GmAsktA8I3uYTCGOcqsj66w&usqp=CAU' },
+  { id: 2, title: 'Easy & Quick Booking', description: 'Book your next tour in just a few clicks. Fast, simple, and hassle-free.', imageUrl: 'https://rezdy.com//wp-content/uploads/2021/03/Blog-Photos-37_11zon.jpg' },
+  { id: 3, title: 'Easy & Quick Booking', description: 'Book your next tour in just a few clicks. Fast, simple, and hassle-free.', imageUrl: 'https://rezdy.com/wp-content/uploads/2022/10/destination-1.jpg' },
 ];
 
 function QuickBookingSection() {

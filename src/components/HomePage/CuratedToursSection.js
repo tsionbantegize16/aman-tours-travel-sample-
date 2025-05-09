@@ -1,18 +1,17 @@
-
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 function CuratedToursSection() {
-  const initialTours = [
-    { id: 1, title: 'Addis Ababa', duration: '4 Days', level: 'Luxury', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Addis+Luxury' },
-    { id: 2, title: 'Omo Valley', duration: '7 Days', level: 'Premium', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Omo+Premium' },
-    { id: 3, title: 'Addis Ababa', duration: '5 Days', level: 'Standard', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Addis+Standard' },
-    { id: 4, title: 'Lalibela', duration: '6 Days', level: 'Luxury', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Lalibela+Luxury' },
-    { id: 5, title: 'Gondar', duration: '4 Days', level: 'Premium', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Gondar+Premium' },
-    { id: 6, title: 'Axum', duration: '7 Days', level: 'Standard', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Axum+Standard' },
-    { id: 7, title: 'Bahar Dar', duration: '5 Days', level: 'Luxury', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Bahar+Dar+Luxury' },
-    { id: 8, title: 'Arba Minch', duration: '6 Days', level: 'Premium', price: '$0', imageUrl: 'https://via.placeholder.com/400x300?text=Arba+Minch+Premium' },
-  ];
+  const initialTours = useMemo(() => [
+    { id: 1, title: 'Addis Ababa', duration: '4 Days', level: 'Luxury', price: '$0', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV2qUJTsHBFU0_RZ3P6qHNz5vOS8l3oGbP1WQ3Upm3a9IgrNa8q1M-vnHFvhBRRoI2mB8&usqp=CAU' },
+    { id: 2, title: 'Omo Valley', duration: '7 Days', level: 'Premium', price: '$0', imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH45o68Uxa1SzQN2XX-HxHsE_FrqVYoOxthgERR2kVFb186IWl9N1QMAHdBFBk3QC7-MY&usqp=CAU' },
+    { id: 3, title: 'Addis Ababa', duration: '5 Days', level: 'Standard', price: '$0', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Addis_in_night.jpg/330px-Addis_in_night.jpg' },
+    { id: 4, title: 'Lalibela', duration: '6 Days', level: 'Luxury', price: '$0', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Lalibela%2C_san_giorgio%2C_esterno_24.jpg/960px-Lalibela%2C_san_giorgio%2C_esterno_24.jpg' },
+    { id: 5, title: 'Gondar', duration: '4 Days', level: 'Premium', price: '$0', imageUrl: 'https://www.exoticca.com/_next/image?url=https%3A%2F%2Fuploads.exoticca.com%2Fglobal%2Fdestination%2Fpoi%2Fgondar.png&w=3840&q=75' },
+    { id: 6, title: 'Axum', duration: '7 Days', level: 'Standard', price: '$0', imageUrl: 'https://cdn.britannica.com/23/93423-050-107B2836/obelisk-kingdom-Aksum-Ethiopian-name-city.jpg' },
+    { id: 7, title: 'Bahar Dar', duration: '5 Days', level: 'Luxury', price: '$0', imageUrl: 'https://lh3.googleusercontent.com/p/AF1QipPUci_WPECN4hYZxDyvptdH8dCTornjV5qiGcaL=h1000-w1000' },
+    { id: 8, title: 'Arba Minch', duration: '6 Days', level: 'Premium', price: '$0', imageUrl: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/204136045.jpg?k=c82ddfe480e13304c480a46f6da450ce26292f6bd48bb6ba76e93401f0d41ee4&o=&hp=1' },
+  ], []); // Memoize initialTours
 
   const [filterLevel, setFilterLevel] = useState('All');
   const [visibleTours, setVisibleTours] = useState(initialTours.slice(0, 4));
@@ -24,11 +23,23 @@ function CuratedToursSection() {
     } else {
       setVisibleTours(initialTours.filter(tour => tour.level === level).slice(0, 4));
     }
-  }, [initialTours]);
+  }, [initialTours]); // Still depends on initialTours, but it's now memoized
 
   useEffect(() => {
     filterTours('All');
   }, [filterTours]);
+
+  const handleFilter = useCallback((level) => {
+    setFilterLevel(level);
+    if (level === 'All') {
+      setVisibleTours(initialTours.slice(0, 4));
+    } else {
+      setVisibleTours(initialTours.filter(tour => tour.level === level).slice(0, 4));
+    }
+  }, [initialTours]); // Also depends on the memoized initialTours
+
+  const activeButtonStyle = 'bg-[#4CAF50] text-[#FFD700]'; // Green background, Gold text
+  const inactiveButtonStyle = 'bg-gray-200 text-gray-700 hover:bg-[#8B4513] hover:text-white'; // Light gray, dark gray text, Brown hover
 
   return (
     <section className="py-20 bg-gray-100">
@@ -37,41 +48,33 @@ function CuratedToursSection() {
           <h2 className="text-xl font-bold text-green-700">Get To Know Us Explore The World</h2>
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => filterTours('All')}
-              className={`py-2 px-4 rounded-full text-sm font-semibold ${
-                filterLevel === 'All'
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400'
+              onClick={() => handleFilter('All')}
+              className={`py-2 px-4 rounded-full text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 ${
+                filterLevel === 'All' ? activeButtonStyle : inactiveButtonStyle
               }`}
             >
               All
             </button>
             <button
-              onClick={() => filterTours('Luxury')}
-              className={`py-2 px-4 rounded-full text-sm font-semibold ${
-                filterLevel === 'Luxury'
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400'
+              onClick={() => handleFilter('Luxury')}
+              className={`py-2 px-4 rounded-full text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 ${
+                filterLevel === 'Luxury' ? activeButtonStyle : inactiveButtonStyle
               }`}
             >
               Luxury
             </button>
             <button
-              onClick={() => filterTours('Premium')}
-              className={`py-2 px-4 rounded-full text-sm font-semibold ${
-                filterLevel === 'Premium'
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400'
+              onClick={() => handleFilter('Premium')}
+              className={`py-2 px-4 rounded-full text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 ${
+                filterLevel === 'Premium' ? activeButtonStyle : inactiveButtonStyle
               }`}
             >
               Premium
             </button>
             <button
-              onClick={() => filterTours('Standard')}
-              className={`py-2 px-4 rounded-full text-sm font-semibold ${
-                filterLevel === 'Standard'
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400'
+              onClick={() => handleFilter('Standard')}
+              className={`py-2 px-4 rounded-full text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400 ${
+                filterLevel === 'Standard' ? activeButtonStyle : inactiveButtonStyle
               }`}
             >
               Standard
